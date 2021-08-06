@@ -1,0 +1,32 @@
+public class CookieDemo03 extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("utf-8");
+        resp.setCharacterEncoding("utf-8");
+
+        Cookie[] cookies = req.getCookies();
+
+        PrintWriter out = resp.getWriter();
+
+        if(cookies!=null){
+            out.write("你上次访问的时间是");
+            for (int i = 0; i < cookies.length; i++) {
+                if(cookies[i].getName().equals("name")){
+                    // System.out.println(cookies[i].getValue());
+                    // 解码
+                    out.write(URLDecoder.decode(cookies[i].getValue(),"utf-8"));
+                }
+            }
+        }else {
+            out.write("这是你第一次访问本站");
+        }
+        // 编码
+        Cookie cookie = new Cookie("name", URLEncoder.encode("童炎","utf-8"));
+        resp.addCookie(cookie);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+}
