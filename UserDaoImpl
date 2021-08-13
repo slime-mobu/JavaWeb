@@ -1,0 +1,61 @@
+package com.slime.dao.user;
+
+import com.slime.dao.BaseDao;
+import com.slime.pojo.User;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class UserDaoImpl implements UserDao{
+    // 得到要登录的用户
+    public User getLoginUser(Connection connection, String userCode) throws SQLException{
+        PreparedStatement pstm = null;
+        ResultSet st = null;
+        User user = null;
+
+        if(connection!=null){
+            String sql = "select * from smbms_user where userCode=?";
+            Object[] params = {userCode};
+
+
+            st = BaseDao.execute(connection,pstm,st,sql,params);
+
+            if(st.next()){
+                user = new User();
+                user.setId(st.getInt("id"));
+                user.setUserCode(st.getString("userCode"));
+                user.setUserName(st.getString("userName"));
+                user.setUserPassword(st.getString("userPassword"));
+                user.setGender(st.getInt("gender"));
+                user.setBirthday(st.getTimestamp("birthday"));
+                user.setPhone(st.getString("phone"));
+                user.setAddress(st.getString("address"));
+                user.setUserRole(st.getInt("userRole"));
+                user.setCreatedBy(st.getInt("createdBy"));
+                user.setCreationDate(st.getTimestamp("creationDate"));
+                user.setModifyBy(st.getInt("modifyBy"));
+                user.setModifyDate(st.getTimestamp("modifyDate"));
+            }
+            BaseDao.closeResource(null,pstm,st);
+
+        }
+        return user;
+    }
+
+    // 修改当前用户密码
+    public int updatePwd(Connection connection, int id, String password) throws SQLException {
+        PreparedStatement pstm = null;
+        int execute = 0;
+
+        if (connection!=null){
+            String sql = "update smbms_user set userPassword = ? where id = ?";
+            Object[] params = {password,id};
+            execute = BaseDao.execute(connection, sql, params, pstm);
+            BaseDao.closeResource(null,pstm,null);
+        }
+
+        return execute;
+    }
+}
