@@ -1,0 +1,33 @@
+public int getUserCount(Connection connection, String username, int userRole) throws SQLException {
+        PreparedStatement pstm = null;
+        ResultSet rs = null;
+        int count = 0;
+
+        if(connection!=null){
+            StringBuffer sql = new StringBuffer();
+            sql.append("select COUNT(1) as count from smbms_user u,smbms_role r where u.userRole = r.id");
+            ArrayList<Object> list = new ArrayList<Object>();// 存放我们的参数
+
+            if(!StringUtils.isNullOrEmpty(username)){
+                sql.append(" and u.userName like ?");
+                list.add("%"+username+"%");// index:0
+            }
+            if(userRole>0){
+                sql.append(" and u.userRole = ?");
+                list.add(userRole);// index:1
+            }
+
+            // 怎么把list转换为数组
+            Object[] params = list.toArray();
+
+            System.out.println("UserDaoImpl->getUserCount:"+sql.toString());// 输出完整的Sql语句
+
+            rs = BaseDao.execute(connection, pstm, rs, sql.toString(), params);
+
+            if(rs.next()){
+                count = rs.getInt("count");// 从结果集中获取最终的数量
+            }
+            BaseDao.closeResource(null,pstm,rs);
+        }
+        return count;
+    }
