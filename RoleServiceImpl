@@ -1,0 +1,15 @@
+public List<Role> getRoleList() {
+        Connection connection = null;
+        List<Role> roleList = null;
+
+
+        try {
+            connection = BaseDao.getConnection();
+            roleList = roleDao.getRoleList(connection);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }finally {
+            BaseDao.closeResource(connection,null,null);
+        }
+        return roleList;
+    }
